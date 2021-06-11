@@ -12,7 +12,7 @@ import (
 	"time"
 	"unicode"
 
-	"github.com/MichaelMure/go-term-text"
+	text "github.com/MichaelMure/go-term-text"
 	"github.com/alecthomas/chroma"
 	"github.com/alecthomas/chroma/formatters"
 	"github.com/alecthomas/chroma/lexers"
@@ -24,7 +24,7 @@ import (
 	"github.com/kyokomi/emoji/v2"
 	"golang.org/x/net/html"
 
-	htmlWalker "github.com/MichaelMure/go-term-markdown/html"
+	htmlWalker "github.com/skyaxl/go-term-markdown/html"
 )
 
 /*
@@ -119,10 +119,10 @@ type renderer struct {
 
 	// record and render the heading numbering
 	headingNumbering headingNumbering
-	headingShade     levelShadeFmt
+	headingShade     LevelShadeFmt
 
 	blockQuoteLevel int
-	blockQuoteShade levelShadeFmt
+	blockQuoteShade LevelShadeFmt
 
 	table *tableRenderer
 }
@@ -225,7 +225,7 @@ func (r *renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 
 			// header of a definition
 			case node.ListFlags&ast.ListTypeTerm != 0:
-				r.inlineAccumulator.WriteString(colorOff)
+				r.inlineAccumulator.WriteString(resetAll)
 
 			// content of a definition
 			case node.ListFlags&ast.ListTypeDefinition != 0:
@@ -275,7 +275,7 @@ func (r *renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 		if entering {
 			r.inlineAccumulator.WriteString(italicOn)
 		} else {
-			r.inlineAccumulator.WriteString(italicOff)
+			r.inlineAccumulator.WriteString(resetAll)
 		}
 
 	case *ast.Strong:
@@ -299,7 +299,7 @@ func (r *renderer) RenderNode(w io.Writer, node ast.Node, entering bool) ast.Wal
 		if entering {
 			r.inlineAccumulator.WriteString(crossedOutOn)
 		} else {
-			r.inlineAccumulator.WriteString(crossedOutOff)
+			r.inlineAccumulator.WriteString(resetAll)
 		}
 
 	case *ast.Link:
@@ -722,14 +722,14 @@ func (r *renderer) renderHTMLBlock(w io.Writer, node *ast.HTMLBlock) {
 				if entering {
 					r.inlineAccumulator.WriteString(italicOn)
 				} else {
-					r.inlineAccumulator.WriteString(italicOff)
+					r.inlineAccumulator.WriteString(resetAll)
 				}
 
 			case "s":
 				if entering {
 					r.inlineAccumulator.WriteString(crossedOutOn)
 				} else {
-					r.inlineAccumulator.WriteString(crossedOutOff)
+					r.inlineAccumulator.WriteString(resetAll)
 				}
 
 			default:
